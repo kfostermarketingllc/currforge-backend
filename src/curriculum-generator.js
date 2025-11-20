@@ -1,5 +1,6 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const { generatePDF } = require('./pdf-generator');
+const { sendCurriculumEmail } = require('./mailchimp-service');
 const AGENT_LIBRARY = require('../agents/agent-prompts');
 
 // Initialize Anthropic client
@@ -129,6 +130,26 @@ async function generateCurriculum(formData) {
     }
 
     console.log('🎉 Curriculum generation complete!');
+
+    // Send email with PDF links if email provided
+    if (formData.email) {
+        try {
+            console.log(`📧 Sending curriculum email to: ${formData.email}`);
+            await sendCurriculumEmail({
+                email: formData.email,
+                context: {
+                    book: context.bookTitle,
+                    grade: context.grade,
+                    duration: context.duration
+                },
+                results: results
+            });
+            console.log('✅ Email sent successfully!');
+        } catch (emailError) {
+            console.error('⚠️ Failed to send email (curriculum still generated):', emailError.message);
+            // Don't fail the whole request if email fails
+        }
+    }
 
     return {
         success: true,
