@@ -191,7 +191,7 @@ function addFooter(doc, context) {
     const pages = doc.bufferedPageRange();
 
     for (let i = 0; i < pages.count; i++) {
-        doc.switchToPage(i);
+        doc.switchToPage(pages.start + i);
 
         // Footer text
         const footerY = 750;
@@ -234,3 +234,4 @@ function getTitleForType(type) {
 module.exports = {
     generatePDF
 };
+
