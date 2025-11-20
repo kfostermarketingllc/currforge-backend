@@ -108,6 +108,145 @@ This document should serve as the guiding framework that all other curriculum co
     },
 
     /**
+     * SPECIAL EDUCATION AGENT
+     * Creates comprehensive special education adaptations and supports
+     */
+    specialEducation: {
+        name: "Special Education Specialist",
+        systemPrompt: `You are an expert in special education, differentiation, and inclusive classroom practices, specializing in adapting curriculum for diverse learning needs.
+
+Your expertise draws from these seminal special education texts:
+
+NEURODIVERSITY AND STRENGTH-BASED APPROACHES:
+- Neurodiversity in the Classroom by Thomas Armstrong: Strength-based strategies for students with special needs, recognizing diverse learning profiles as assets
+- The Complete Learning Disabilities Handbook by Joan M. Harwell and Rebecca Williams Jackson: Understanding and educating students with learning disabilities, motivation strategies, attention support
+
+IEP DEVELOPMENT AND IMPLEMENTATION:
+- The IEP from A to Z by Diane Twachtman-Cullen: Creating meaningful, measurable IEP goals and objectives, legal compliance, progress monitoring
+- High-Leverage Practices in Special Education (Council of Exceptional Children): Evidence-based practices proven effective for students with disabilities
+
+DIFFERENTIATION AND INSTRUCTION:
+- Differentiation in Middle and High School by Kristina Doubet and Jessica Hockett: Strategies for tailoring instruction, flexible grouping, tiered assignments, choice boards
+- Comprehensive Literacy for All by Dr. Karen Erickson: Teaching reading and writing to students with significant disabilities, Universal Design for Learning (UDL)
+
+Your task is to create a Special Education Adaptations Guide that:
+- Provides specific, actionable modifications and accommodations
+- Draws on strength-based approaches to support diverse learners
+- Offers concrete strategies aligned with evidence-based practices
+- Ensures all curriculum materials are accessible and appropriately challenging
+- Supports IEP implementation, ELL strategies, and gifted differentiation
+- Integrates Universal Design for Learning (UDL) principles
+- Provides measurable goals and progress monitoring tools
+
+This guide should inform how all curriculum components are adapted to meet diverse learning needs.`,
+
+        generatePrompt: (context) => `Create a comprehensive Special Education Adaptations Guide for the following literature course:
+
+**Course Details:**
+- Grade Level: ${context.grade}
+- Book/Text: ${context.bookTitle}
+- State: ${context.state}
+- Duration: ${context.duration}
+- Learning Objectives: ${context.learningObjectives}
+
+**Special Education Needs (THIS GUIDE IS CRITICAL):**
+${context.specialEducation.iep ? '- ✓ IEP Accommodations Required' : ''}
+${context.specialEducation.ell ? '- ✓ ELL Support Needed' : ''}
+${context.specialEducation.gifted ? '- ✓ Gifted & Talented Differentiation Needed' : ''}
+${context.specialEducation.details ? `- Additional Details: ${context.specialEducation.details}` : ''}
+
+**Additional Context:**
+${context.additionalContext || 'None provided'}
+
+**Focus Areas:**
+${context.focusAreas.join(', ') || 'General literature study'}
+
+Create a comprehensive Special Education Adaptations Guide that includes:
+
+1. **Overview & Philosophy**
+   - Strength-based approach to supporting diverse learners (Armstrong)
+   - Universal Design for Learning (UDL) framework for this course
+   - How neurodiversity enriches literature discussion
+   - Creating an inclusive, affirming classroom culture
+
+2. **IEP-Specific Adaptations** ${context.specialEducation.iep ? '(REQUIRED)' : ''}
+   - Specific accommodations for common disabilities (LD, ADHD, ASD, etc.)
+   - Modified reading strategies for ${context.bookTitle}
+   - Assistive technology recommendations
+   - Testing accommodations (extended time, reduced distractions, read-aloud, etc.)
+   - Modified assignment formats
+   - Measurable IEP goals aligned with course objectives (Twachtman-Cullen)
+   - Progress monitoring tools and data collection methods
+   - High-leverage practices to implement (CEC)
+
+3. **ELL Support Strategies** ${context.specialEducation.ell ? '(REQUIRED)' : ''}
+   - Language scaffolding techniques for ${context.bookTitle}
+   - Vocabulary pre-teaching and visual supports
+   - Modified texts and graphic organizers
+   - Comprehension strategies for complex literature
+   - Speaking and writing supports
+   - Cultural responsiveness and background knowledge building
+   - WIDA or state ELL standards alignment
+
+4. **Gifted & Talented Differentiation** ${context.specialEducation.gifted ? '(REQUIRED)' : ''}
+   - Extension activities and enrichment options
+   - Higher-order thinking questions (Doubet & Hockett)
+   - Advanced literary analysis opportunities
+   - Independent study projects
+   - Acceleration and depth options
+   - Creative and analytical challenges beyond grade level
+
+5. **Differentiated Instruction Strategies** (for ALL students)
+   - Tiered assignments for varying readiness levels
+   - Flexible grouping strategies
+   - Choice boards and learning menus
+   - Multiple means of representation, action, and expression (UDL)
+   - Scaffolding and gradual release of responsibility
+   - Differentiated discussion protocols
+   - Varied assessment formats
+
+6. **Literacy Supports** (Erickson)
+   - Reading comprehension strategies for struggling readers
+   - Modified reading schedules and chunking
+   - Graphic organizers specific to ${context.bookTitle}
+   - Writing supports and sentence frames
+   - Technology tools (text-to-speech, speech-to-text, word prediction)
+   - Multi-sensory approaches to literary analysis
+
+7. **Classroom Management & Support**
+   - Environmental accommodations (seating, lighting, noise)
+   - Behavioral supports and positive reinforcement
+   - Executive function supports (organization, time management)
+   - Self-regulation strategies
+   - Collaborative teaching models (co-teaching, para support)
+   - Parent communication strategies
+
+8. **Assessment Adaptations**
+   - Alternative assessment formats
+   - Modified grading criteria
+   - Formative assessment strategies
+   - Self-assessment and reflection tools
+   - Portfolio options
+   - Testing accommodations guide
+
+9. **Specific Strategies for ${context.bookTitle}**
+   - How to adapt this particular text for diverse learners
+   - Accessibility considerations for themes, language, complexity
+   - Strength-based discussion of how different learners connect with content
+   - Potential challenges and proactive supports
+
+10. **Implementation Guide**
+   - Week-by-week differentiation planning for ${context.duration}
+   - Templates and tools for teachers
+   - Progress monitoring schedule
+   - Data collection forms
+   - Collaboration with special education staff
+   - Legal compliance checklist (IEP implementation)
+
+Make ALL recommendations specific, actionable, and directly applicable to teaching ${context.bookTitle}. Reference evidence-based practices from the foundational texts. This guide should be a practical tool teachers can use daily.`
+    },
+
+    /**
      * SYLLABUS AGENT
      * Creates comprehensive course syllabus
      */
