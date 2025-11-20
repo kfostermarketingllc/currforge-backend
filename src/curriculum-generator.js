@@ -1,6 +1,7 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const { generatePDF } = require('./pdf-generator');
 const { sendCurriculumEmail } = require('./mailchimp-service');
+const { addToAudience, addCurriculumEvent } = require('./mailchimp-audience-service');
 const AGENT_LIBRARY = require('../agents/agent-prompts');
 
 // Initialize Anthropic client
@@ -48,6 +49,27 @@ async function generateCurriculum(formData) {
 
     // Prepare context for AI agents
     const context = prepareContext(formData);
+
+    // Add email to Mailchimp audience (non-blocking)
+    if (formData.email) {
+        try {
+            await addToAudience({
+                email: formData.email,
+                tags: ['currforge-user', `grade-${formData.grade}`, `subject-${formData.subject}`]
+            });
+
+            // Track curriculum generation event
+            await addCurriculumEvent({
+                email: formData.email,
+                book: context.bookTitle,
+                grade: formData.grade,
+                subject: formData.subject
+            });
+        } catch (error) {
+            // Don't fail generation if audience sync fails
+            console.error('⚠️ Failed to sync to audience (non-critical):', error.message);
+        }
+    }
 
     // Define generation tasks
     // Foundation agent runs FIRST to establish philosophical framework
