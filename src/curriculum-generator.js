@@ -1,6 +1,6 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const { generatePDF } = require('./pdf-generator');
-const { sendCurriculumEmail } = require('./email-service');
+const { sendCurriculumEmail } = require('./mailchimp-service');
 const AGENT_LIBRARY = require('../agents/agent-prompts');
 
 // Initialize Anthropic client
