@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '../public')));
+// Note: Frontend is hosted separately on Hostinger, not served from backend
 
 // Store generation status
 const generationStatus = new Map();
@@ -93,9 +93,19 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Serve frontend
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+// Root endpoint - just returns API info
+app.get('/', (req, res) => {
+    res.json({
+        name: 'CurrForge API',
+        version: '2.0',
+        status: 'running',
+        agents: 10,
+        endpoints: {
+            health: '/api/health',
+            generate: 'POST /api/generate',
+            download: 'GET /api/download/:filename'
+        }
+    });
 });
 
 // Start server
