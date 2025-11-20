@@ -51,7 +51,24 @@ async function generateCurriculum(formData) {
     // Define generation tasks
     // Foundation agent runs FIRST to establish philosophical framework
     const tasks = [
-        { type: 'foundation', agent: AGENT_LIBRARY.foundation },
+        { type: 'foundation', agent: AGENT_LIBRARY.foundation }
+    ];
+
+    // Add Special Education agent if ANY special ed needs are selected
+    const hasSpecialEdNeeds = formData.specialEducation && (
+        formData.specialEducation.iep ||
+        formData.specialEducation.ell ||
+        formData.specialEducation.gifted ||
+        formData.specialEducation.details
+    );
+
+    if (hasSpecialEdNeeds) {
+        tasks.push({ type: 'specialEducation', agent: AGENT_LIBRARY.specialEducation });
+        console.log('  🎓 Special Education agent enabled - IEP, ELL, or Gifted support requested');
+    }
+
+    // Add remaining standard agents
+    tasks.push(
         { type: 'syllabus', agent: AGENT_LIBRARY.syllabus },
         { type: 'materials', agent: AGENT_LIBRARY.materials },
         { type: 'grading', agent: AGENT_LIBRARY.grading },
@@ -61,7 +78,7 @@ async function generateCurriculum(formData) {
         { type: 'homework', agent: AGENT_LIBRARY.homework },
         { type: 'reading', agent: AGENT_LIBRARY.reading },
         { type: 'lessons', agent: AGENT_LIBRARY.lessons }
-    ];
+    );
 
     // Generate all content sequentially (can be parallelized later)
     const results = {};
@@ -77,6 +94,12 @@ async function generateCurriculum(formData) {
             if (task.type === 'foundation') {
                 context.educationalFoundation = content;
                 console.log(`  📚 Educational foundation established - will inform all subsequent components`);
+            }
+
+            // If this is the special education agent, add its output to context for subsequent agents
+            if (task.type === 'specialEducation') {
+                context.specialEducationGuide = content;
+                console.log(`  🎓 Special education adaptations established - will inform all subsequent components`);
             }
 
             // Generate PDF
@@ -177,4 +200,3 @@ async function callAIAgent(agent, context) {
 module.exports = {
     generateCurriculum
 };
-

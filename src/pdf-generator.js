@@ -217,6 +217,7 @@ function addFooter(doc, context) {
 function getTitleForType(type) {
     const titles = {
         foundation: 'Educational Foundation Document',
+        specialEducation: 'Special Education Adaptations Guide',
         syllabus: 'Course Syllabus',
         materials: 'Materials & Resources List',
         grading: 'Grading Criteria & Rubrics',
@@ -234,4 +235,3 @@ function getTitleForType(type) {
 module.exports = {
     generatePDF
 };
-
