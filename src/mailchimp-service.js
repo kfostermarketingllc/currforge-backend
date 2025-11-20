@@ -1,4 +1,6 @@
-const mailchimp = require('@mailchimp/mailchimp_transactional')(process.env.MAILCHIMP_API_KEY);
+// Initialize Mailchimp Transactional client
+const Mailchimp = require('@mailchimp/mailchimp_transactional');
+const mailchimp = Mailchimp(process.env.MAILCHIMP_API_KEY);
 
 /**
  * Mailchimp Email Service
@@ -37,6 +39,8 @@ async function sendCurriculumEmail({ email, context, results }) {
         };
 
         // Send via Mailchimp Transactional API
+        console.log('🔑 Using Mailchimp API Key:', process.env.MAILCHIMP_API_KEY ? 'Present' : 'MISSING');
+
         const response = await mailchimp.messages.send({
             message: message
         });
@@ -44,15 +48,27 @@ async function sendCurriculumEmail({ email, context, results }) {
         console.log(`✅ Email sent successfully to ${email}`);
         console.log('Mailchimp response:', JSON.stringify(response, null, 2));
 
+        // Check if response is valid
+        if (!response || !Array.isArray(response) || response.length === 0) {
+            throw new Error('Invalid response from Mailchimp');
+        }
+
         return {
             success: true,
             messageId: response[0]._id,
-            status: response[0].status
+            status: response[0].status,
+            email: response[0].email
         };
 
     } catch (error) {
-        console.error('❌ Error sending email:', error);
-        throw error;
+        console.error('❌ Error sending email via Mailchimp:', error.message);
+
+        // Log more details for debugging
+        if (error.response) {
+            console.error('Mailchimp API Error Response:', error.response.data);
+        }
+
+        throw new Error(`Mailchimp email failed: ${error.message}`);
     }
 }
 

@@ -21,7 +21,8 @@ const generationStatus = new Map();
 
 /**
  * POST /api/generate
- * Generate complete curriculum based on form data
+ * Generate complete curriculum based on form data (ASYNC)
+ * Returns immediately, generation happens in background, email sent when complete
  */
 app.post('/api/generate', async (req, res) => {
     try {
@@ -38,17 +39,62 @@ app.post('/api/generate', async (req, res) => {
             });
         }
 
-        // Generate curriculum (this will take 2-3 minutes)
-        console.log('🤖 Starting AI generation...');
-        const result = await generateCurriculum(formData);
+        // Validate email is provided
+        if (!formData.email) {
+            return res.status(400).json({
+                error: 'Email address is required',
+                message: 'Please provide your email address to receive the curriculum'
+            });
+        }
 
-        console.log('✅ Generation complete!');
-        res.json(result);
+        // Generate unique request ID
+        const requestId = `curr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+        // Store initial status
+        generationStatus.set(requestId, {
+            status: 'processing',
+            email: formData.email,
+            startedAt: new Date().toISOString(),
+            progress: 'Starting curriculum generation...'
+        });
+
+        // Return immediately - generation will continue in background
+        console.log('✅ Request accepted - generation starting in background');
+        res.json({
+            success: true,
+            message: 'Curriculum generation started! You will receive an email when complete.',
+            requestId: requestId,
+            email: formData.email,
+            estimatedTime: '2-3 minutes',
+            status: 'processing'
+        });
+
+        // Generate curriculum in background (don't await)
+        console.log('🤖 Starting AI generation in background...');
+        generateCurriculum(formData)
+            .then(result => {
+                console.log('✅ Background generation complete!');
+                generationStatus.set(requestId, {
+                    status: 'completed',
+                    email: formData.email,
+                    completedAt: new Date().toISOString(),
+                    result: result
+                });
+            })
+            .catch(error => {
+                console.error('❌ Background generation failed:', error);
+                generationStatus.set(requestId, {
+                    status: 'failed',
+                    email: formData.email,
+                    error: error.message,
+                    failedAt: new Date().toISOString()
+                });
+            });
 
     } catch (error) {
-        console.error('❌ Error generating curriculum:', error);
+        console.error('❌ Error processing request:', error);
         res.status(500).json({
-            error: 'Failed to generate curriculum',
+            error: 'Failed to start curriculum generation',
             message: error.message
         });
     }
