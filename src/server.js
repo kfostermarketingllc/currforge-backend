@@ -9,8 +9,13 @@ const { generateCurriculum } = require('./curriculum-generator');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+// Middleware - CORS configuration for frontend
+app.use(cors({
+  origin: ['https://currforge.com', 'https://www.currforge.com', 'http://localhost:3000', 'http://127.0.0.1:3000'],
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.use(bodyParser.json());
 // Note: Frontend is hosted separately on Hostinger, not served from backend
 
